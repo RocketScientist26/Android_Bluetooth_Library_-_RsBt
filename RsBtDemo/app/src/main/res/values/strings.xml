@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- App name -->
+    <string name="app_name">RsBtDemo</string>
+
+    <!-- Spinner -->
+    <string name="spinner_no_devices">No devices</string>
+
+    <!-- Buttons -->
+    <string name="button_clear">Clear</string>
+    <string name="button_connected">Disconnect</string>
+    <string name="button_disconnected">Connect</string>
+    <string name="button_connecting">Connecting...</string>
+    <string name="button_send">Send</string>
+
+    <!-- Labels -->
+    <string name="text_connect">Connection:</string>
+    <string name="text_rx_data">Receive:</string>
+    <string name="text_tx_data">Transmit:</string>
+
+    <!-- Placeholders -->
+    <string name="text_rx_data_placeholder">No data...</string>
+    <string name="text_tx_data_placeholder">Type here...</string>
+
+</resources>
