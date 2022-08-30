@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.RsBtDemo" parent="Theme.MaterialComponents.Light">
+    <style name="Theme.RsBtDemo" parent="Theme.MaterialComponents.Light.NoActionBar">
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
