@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Message
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import me.rocket_scientist.rsbt.RsBtConnMngrThread
@@ -27,74 +26,78 @@ class MainActivity : AppCompatActivity() {
 
     //Bluetooth write thread
     private lateinit var btth_w: RsBtWriteThread
-    private inner class btWriteHandler : Handler(Looper.getMainLooper()){
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            when (msg.what) {
-                RsBtWriteThread.STAT.MESSAGE_WRITTEN.ordinal -> {
-                    //!UNUSED
-                }
-                RsBtWriteThread.STAT.MESSAGE_SCHEDULED.ordinal -> {
-                    //!UNUSED
-                }
-                RsBtWriteThread.STAT.STREAM_BUSY.ordinal -> {
-                    connectClicked()
-                }
-                RsBtWriteThread.STAT.WRITING_MESSAGE_FAILED.ordinal -> {
-                    connectClicked()
-                }
+    private var btWriteHandler = Handler(Looper.getMainLooper()
+    ) { msg ->
+        when (msg.what) {
+            RsBtWriteThread.STAT.MESSAGE_WRITTEN.ordinal -> {
+                //!UNUSED
+            }
+            RsBtWriteThread.STAT.MESSAGE_SCHEDULED.ordinal -> {
+                //!UNUSED
+            }
+            RsBtWriteThread.STAT.STREAM_BUSY.ordinal -> {
+                connectClicked()
+            }
+            RsBtWriteThread.STAT.WRITING_MESSAGE_FAILED.ordinal -> {
+                connectClicked()
             }
         }
+
+        false
     }
+
 
     //Bluetooth read thread
     private lateinit var btth_r: RsBtReadThread
-    private inner class btReadHandler : Handler(Looper.getMainLooper()){
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            if(msg.what == RsBtReadThread.STAT.MESSAGE_READ_SUCCESSFULLY.ordinal) {
+    private var btReadHandler = Handler(Looper.getMainLooper()
+    ) { msg ->
+        when (msg.what) {
+            RsBtReadThread.STAT.MESSAGE_READ_SUCCESSFULLY.ordinal -> {
                 val data = msg.obj.toString()
                 runOnUiThread {
                     textView_rx.append(data + "\n")
                     uiEnableConditional()
                 }
-            }else if(msg.what == RsBtReadThread.STAT.NO_INPUT_STREAM.ordinal) {
+            }
+            RsBtReadThread.STAT.NO_INPUT_STREAM.ordinal -> {
                 connectClicked()
             }
         }
+
+        false
     }
 
     //Bluetooth connection manager
     private lateinit var btconmngr: RsBtConnMngrThread
-    private inner class btConnHandler : Handler(Looper.getMainLooper()){
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            when (msg.what) {
-                RsBtConnMngrThread.STAT.CONNECTED.ordinal -> {
-                    btth_r = RsBtReadThread(btReadHandler(), btconmngr.socket)
-                    /*
-                         After receiving every chunk of data, thread runs
-                         timer with "rx_timeout_ms" milliseconds timeout.
-                         If no more data will be received for this time,
-                         "packet" reception will be completed.
-                    */
-                    btth_r.rx_timeout_ms = 80
-                    btth_r.start()
-                    btth_w = RsBtWriteThread(btWriteHandler(), btconmngr.socket)
-                    btth_w.start()
+    private var btConnHandler = Handler(Looper.getMainLooper()
+    ) { msg ->
+        when (msg.what) {
+            RsBtConnMngrThread.STAT.CONNECTED.ordinal -> {
+                btth_r = RsBtReadThread(btReadHandler, btconmngr.socket)
+                /*
+                     After receiving every chunk of data, thread runs
+                     timer with "rx_timeout_ms" milliseconds timeout.
+                     If no more data will be received for this time,
+                     "packet" reception will be completed.
+                */
+                btth_r.rx_timeout_ms = 80
+                btth_r.start()
+                btth_w = RsBtWriteThread(btWriteHandler, btconmngr.socket)
+                btth_w.start()
 
-                    conn_disconn_rq = false
-                    uiEnableConditional()
-                }
-                RsBtConnMngrThread.STAT.DISCONNECTED.ordinal -> {
-                    conn_disconn_rq = false
-                    uiEnableConditional()
-                }
-                RsBtConnMngrThread.STAT.SOCKET_CLOSE_FAIL.ordinal -> {
-                    //!UNUSED
-                }
+                conn_disconn_rq = false
+                uiEnableConditional()
+            }
+            RsBtConnMngrThread.STAT.DISCONNECTED.ordinal -> {
+                conn_disconn_rq = false
+                uiEnableConditional()
+            }
+            RsBtConnMngrThread.STAT.SOCKET_CLOSE_FAIL.ordinal -> {
+                //!UNUSED
             }
         }
+
+        false
     }
 
     //Bluetooth Device Manager
@@ -187,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                 return
             }
         }
-        btconmngr = RsBtConnMngrThread(btConnHandler(), devices!!.elementAt(spinner_devices.selectedItemPosition)!!, this)
+        btconmngr = RsBtConnMngrThread(btConnHandler, devices!!.elementAt(spinner_devices.selectedItemPosition)!!, this)
         btconmngr.start()
 
         runOnUiThread { button_connect.setText(R.string.button_connecting) }
