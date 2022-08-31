@@ -125,15 +125,9 @@ open class RsBtDevMngr(private val activity: AppCompatActivity){
         }
         return null
     }
-    fun getDeviceName(dev: Set<BluetoothDevice?>?, index: Int): String {
-        @SuppressLint("MissingPermission")
-        if (checkPermissions() == STAT.OK) {
-            return dev?.elementAt(index)?.name.toString()
-        }
-        return ""
-    }
     fun exit() {
         activity.unregisterReceiver(broadCastReceiver)
+        activity.finish()
         exitProcess(0)
     }
 
