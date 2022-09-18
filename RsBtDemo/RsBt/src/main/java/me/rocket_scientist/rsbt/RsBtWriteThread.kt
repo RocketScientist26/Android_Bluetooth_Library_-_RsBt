@@ -33,12 +33,13 @@ class RsBtWriteThread(private val handler: Handler, private val socket: Bluetoot
         }
     }
 
-    fun sendString(string: String): STAT {
+    fun sendString(string: String) {
         if(!write_rq){
             data = string
             write_rq = true
-            return STAT.MESSAGE_SCHEDULED
+            sendMessage(STAT.MESSAGE_SCHEDULED, data)
+            return
         }
-        return STAT.STREAM_BUSY
+        sendMessage(STAT.STREAM_BUSY, string)
     }
 }

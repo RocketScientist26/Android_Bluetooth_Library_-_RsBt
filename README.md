@@ -1,3 +1,3 @@
-# Android Bluetooth Library - RsBt
+# Android Kotlin Bluetooth Library - RsBt
 
 Bluetooth library and demo app for communicating with serial modules like HC-05, JDY-30...

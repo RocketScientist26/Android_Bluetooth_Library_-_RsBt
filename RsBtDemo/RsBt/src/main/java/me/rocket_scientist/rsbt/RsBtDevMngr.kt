@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import java.lang.reflect.Method
 import kotlin.system.exitProcess
 
 open class RsBtDevMngr(private val activity: AppCompatActivity){
@@ -25,7 +26,8 @@ open class RsBtDevMngr(private val activity: AppCompatActivity){
         TURNED_ON,
         TURNED_OFF,
         DEVICES_UPDATED,
-        OK
+        OK,
+        FAIL
     }
 
     //Private
@@ -117,6 +119,14 @@ open class RsBtDevMngr(private val activity: AppCompatActivity){
     }
 
     //Public functions
+    fun unpair(device: BluetoothDevice): STAT{
+        try {
+            device::class.java.getMethod("removeBond").invoke(device)
+        } catch (e: Exception) {
+            return STAT.FAIL
+        }
+        return STAT.OK
+    }
     fun getDevices(): Set<BluetoothDevice?>? {
         @SuppressLint("MissingPermission")
         if (checkPermissions() == STAT.OK) {

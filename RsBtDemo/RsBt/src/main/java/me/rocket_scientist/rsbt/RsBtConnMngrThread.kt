@@ -44,6 +44,9 @@ open class RsBtConnMngrThread(private val handler: Handler, private val device: 
         }
     }
 
+    fun currentDevice(): BluetoothDevice {
+        return device
+    }
     fun isConnected(): Boolean {
         if(socket.isConnected){
             return true
