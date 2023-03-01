@@ -36,10 +36,22 @@ class MainActivity : AppCompatActivity() {
                 //!UNUSED
             }
             RsBtWriteThread.STAT.STREAM_BUSY.ordinal -> {
-                connectClicked()
+                conn_disconn_rq = true
+                if(::btconmngr.isInitialized){
+                    if(btconmngr.isConnected()){
+                        uiEnableConditional()
+                        btconmngr.disconnect()
+                    }
+                }
             }
             RsBtWriteThread.STAT.WRITING_MESSAGE_FAILED.ordinal -> {
-                connectClicked()
+                conn_disconn_rq = true
+                if(::btconmngr.isInitialized){
+                    if(btconmngr.isConnected()){
+                        uiEnableConditional()
+                        btconmngr.disconnect()
+                    }
+                }
             }
         }
 
@@ -60,7 +72,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             RsBtReadThread.STAT.NO_INPUT_STREAM.ordinal -> {
-                connectClicked()
+                conn_disconn_rq = true
+                if(::btconmngr.isInitialized){
+                    if(btconmngr.isConnected()){
+                        uiEnableConditional()
+                        btconmngr.disconnect()
+                    }
+                }
             }
         }
 

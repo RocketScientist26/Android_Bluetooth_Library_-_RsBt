@@ -29,6 +29,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'me.rocket_scientist.rsbtdemo'
 }
 
 dependencies {
